@@ -1,0 +1,24 @@
+# Development environment for Frontend and Backend services
+services:
+  caddy:
+    image: ghcr.io/docker-pet/caddy:latest
+    container_name: caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+      BASE_DOMAIN: ${BASE_DOMAIN}
+    command:
+      - run
+      - --config
+      - /etc/caddy/Caddyfile
+      - --watch
+    volumes:
+      - ./volumes/caddy/dev/Caddyfile:/etc/caddy/Caddyfile
+
+  lampa:
+    image: nginx:alpine
+    container_name: lampa
+    restart: always

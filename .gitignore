@@ -1,0 +1,13 @@
+# Caddy
+/data/caddy/logs
+/data/caddy/data
+
+# Enviroment
+.env
+
+# Lampa
+/volumes/lampa/configs
+/volumes/lampa/dlna
+
+# Backend
+/volumes/backend

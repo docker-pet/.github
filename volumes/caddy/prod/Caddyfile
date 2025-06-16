@@ -1,0 +1,44 @@
+{
+	dynamic_dns {
+		provider cloudflare {$CLOUDFLARE_API_TOKEN}
+		domains {
+			{$BASE_DOMAIN} @ www lampa
+		}
+	}
+}
+
+(otp_auth) {
+	forward_auth {args[0]} http://backend {
+		uri /api/otp/verify
+		copy_headers Cookie
+		header_down Set-Cookie
+		header_up Remote-Addr {host}
+		header_up Original-URI {uri}
+	}
+}
+
+{$BASE_DOMAIN} {
+	@api path /api /api/* /_ /_/*
+	handle @api {
+		reverse_proxy http://backend
+	}
+
+	handle {
+		reverse_proxy http://frontend
+	}
+}
+
+lampa.{$BASE_DOMAIN} {
+	@not_static {
+		not {
+			path /manifest.json
+			path /lampa-main/*
+		}
+	}
+
+	import otp_auth @not_static
+
+	handle {
+		reverse_proxy http://lampa
+	}
+}
