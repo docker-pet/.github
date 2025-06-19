@@ -15,9 +15,10 @@
             const url = new URL(location.href);
             const parentDomain = url.hostname.replace(/^[^.]+\./, '');
 
-            const user = await fetch(`${url.protocol}//${parentDomain}/api/lampa/user`)
-                .then(response => response.json())
-                .catch(() => null);
+            const user = await fetch(
+                `${url.protocol}//${parentDomain}/api/lampa/user`,
+                { credentials: "include" }
+            ).then(response => response.json()).catch(() => null);
 
             const deviceName = localStorage.getItem('device_name') || '';
             const lampacUnicId = localStorage.getItem('lampac_unic_id') || '';
