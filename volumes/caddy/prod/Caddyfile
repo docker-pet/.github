@@ -18,18 +18,19 @@
 }
 
 {$BASE_DOMAIN} {
-	@options method OPTIONS
-	handle @options {
-		header {
-			# TODO: Origin validation
-			Access-Control-Allow-Origin *
-			Access-Control-Allow-Credentials true
-			Access-Control-Allow-Methods *
-			Access-Control-Allow-Headers *
-			Access-Control-Allow-Credentials true
-		}
-		respond 204
-	}
+  @cors_preflight {
+    method OPTIONS
+    header Origin *.{$BASE_DOMAIN}
+  }
+  respond @cors_preflight 204 {
+    headers {
+      Access-Control-Allow-Origin {http.request.header.Origin}
+      Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+      Access-Control-Allow-Headers "{http.request.header.Access-Control-Request-Headers}"
+      Access-Control-Allow-Credentials "true"
+      Vary "Origin"
+    }
+  }
 
 	@api path /api /api/* /_ /_/*
 	handle @api {
