@@ -29,15 +29,12 @@
 }
 
 lampa.{$BASE_DOMAIN} {
-	@not_static {
-		not {
-			path /manifest.json
-			path /lampa-main/*
-			path *.js *.css
-		}
+	@only_index {
+		path /
+		path /lampa-main/index.html
 	}
 
-	import otp_auth @not_static
+	import otp_auth @only_index
 
 	handle {
 		reverse_proxy http://lampa
