@@ -18,13 +18,13 @@
             const user = await fetch(
                 `${url.protocol}//${parentDomain}/api/lampa/user`,
                 { credentials: "include" }
-            ).then(response => response.json()).catch(() => null);
+            ).then(response => response.json()).catch(() => null)
 
             const deviceName = localStorage.getItem('device_name') || '';
             const lampacUnicId = localStorage.getItem('lampac_unic_id') || '';
          
             if (user.deviceName !== deviceName || user.authKey !== lampacUnicId) {
-                console.infi('Device name or lampac unic ID mismatch.');
+                console.info('Device name or lampac unic ID mismatch.');
                 localStorage.setItem('device_name', user.deviceName);
                 localStorage.setItem('lampac_unic_id', user.authKey);
                 needToReload = true;
