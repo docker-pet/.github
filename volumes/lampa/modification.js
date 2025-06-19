@@ -20,13 +20,16 @@
                 { credentials: "include" }
             ).then(response => response.json()).catch(() => null)
 
+            const userDeviceName = decodeURIComponent(user.deviceName || '');
+            const userAuthKey = user.authKey || '';
+
             const deviceName = localStorage.getItem('device_name') || '';
             const lampacUnicId = localStorage.getItem('lampac_unic_id') || '';
          
-            if (user.deviceName !== deviceName || user.authKey !== lampacUnicId) {
+            if (userDeviceName !== deviceName || userAuthKey !== lampacUnicId) {
                 console.info('Device name or lampac unic ID mismatch.');
-                localStorage.setItem('device_name', user.deviceName);
-                localStorage.setItem('lampac_unic_id', user.authKey);
+                localStorage.setItem('device_name', userDeviceName);
+                localStorage.setItem('lampac_unic_id', userAuthKey);
                 needToReload = true;
                 break;
             }
