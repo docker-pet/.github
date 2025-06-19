@@ -32,6 +32,7 @@
             }
 
             console.info('Successfully verified device name and lampac unicId.');
+            break;
         } catch (e) {
             console.error('Error in modification script:', e);
             await new Promise(resolve => setTimeout(resolve, 500));
