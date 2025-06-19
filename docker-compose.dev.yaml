@@ -17,6 +17,9 @@ services:
       - --watch
     volumes:
       - ./volumes/caddy/dev/Caddyfile:/etc/caddy/Caddyfile
+      - ./volumes/caddy/data:/data
+      - ./volumes/caddy/config:/config
+      - ./volumes/lampa/modification.js:/lampa-plugins/modification.js:ro
 
   lampa:
     image: nginx:alpine

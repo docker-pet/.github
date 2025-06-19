@@ -1,6 +1,6 @@
 # Caddy
-/data/caddy/logs
-/data/caddy/data
+/volumes/caddy/data
+/volumes/caddy/config
 
 # Enviroment
 .env
