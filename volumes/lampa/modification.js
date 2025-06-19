@@ -6,7 +6,7 @@
     const retryLimit = 10;
     let retryCount = 0;
     while (true) {
-        if (retryCount++ < retryLimit) {
+        if (retryCount++ >= retryLimit) {
             console.error('Retry limit reached, stopping the script.');
             break;
         }
