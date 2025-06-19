@@ -36,6 +36,12 @@ lampa.{$BASE_DOMAIN} {
 
 	import otp_auth @only_index
 
+	handle /lampa-main/plugins/modification.js {
+		root * /lampa-plugins
+		rewrite * /modification.js
+		file_server
+	}
+
 	handle {
 		reverse_proxy http://lampa
 	}
