@@ -34,7 +34,7 @@ lampa.dev.{$BASE_DOMAIN} {
 		not {
 			path /manifest.json
 			path /lampa-main/*
-			path_regexp not_root_assets ^/[A-Za-z0-9_-]+\.(js|css)$
+			path *.js *.css
 		}
 	}
 
