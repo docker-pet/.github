@@ -18,19 +18,27 @@
 }
 
 {$BASE_DOMAIN} {
-  @cors_preflight {
-    method OPTIONS
-    header Origin *.{$BASE_DOMAIN}
-  }
-  respond @cors_preflight 204 {
-    headers {
-      Access-Control-Allow-Origin {http.request.header.Origin}
-      Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
-      Access-Control-Allow-Headers "{http.request.header.Access-Control-Request-Headers}"
-      Access-Control-Allow-Credentials "true"
-      Vary "Origin"
+    @cors_preflight {
+        method OPTIONS
+        header Origin *.{$BASE_DOMAIN}
     }
-  }
+    respond @cors_preflight 204
+    header @cors_preflight {
+        Access-Control-Allow-Origin {http.request.header.Origin}
+        Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+        Access-Control-Allow-Headers "{http.request.header.Access-Control-Request-Headers}"
+        Access-Control-Allow-Credentials "true"
+        Vary "Origin"
+    }
+
+    @cors {
+        header Origin *.{$BASE_DOMAIN}
+    }
+    header @cors {
+        Access-Control-Allow-Origin {http.request.header.Origin}
+        Access-Control-Allow-Credentials "true"
+        Vary "Origin"
+    }
 
 	@api path /api /api/* /_ /_/*
 	handle @api {
