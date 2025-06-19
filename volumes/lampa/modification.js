@@ -41,7 +41,7 @@
     const userInitializerVersion = localStorage.getItem('lampa_modification_version')
     if (userInitializerVersion !== initializerVersion) {
         needToReload = true;
-        const lampaAccount = localStorage.getItem('account') || '{}';
+        const lampaAccount = localStorage.getItem('account') || '';
         const lampaAccountEmail = localStorage.getItem('account_email') || '';
 
         localStorage.clear();
