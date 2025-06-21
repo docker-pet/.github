@@ -2,7 +2,7 @@
 	dynamic_dns {
 		provider cloudflare {$CLOUDFLARE_API_TOKEN}
 		domains {
-			{$BASE_DOMAIN} @ www lampa
+			{$CLOUDFLARE_DOMAIN_ZONE} @ lampa
 		}
 	}
 }
@@ -17,15 +17,17 @@
 	}
 }
 
+(cors) {
+	@subdomain header Origin https://*.{$BASE_DOMAIN}
+	header @subdomain Access-Control-Allow-Origin {http.request.header.Origin}
+	header @subdomain Access-Control-Allow-Credentials "true"
+	header @subdomain Vary "Origin"
+}
+
 {$BASE_DOMAIN} {
 	@api path /api /api/* /_ /_/*
-	@subdomain header Origin https://*.{$BASE_DOMAIN}
 
 	handle @api {
-		header @subdomain Access-Control-Allow-Origin {http.request.header.Origin}
-		header @subdomain Access-Control-Allow-Credentials "true"
-		header @subdomain Vary "Origin"
-
 		reverse_proxy http://backend {
 			header_down -Access-Control-Allow-Origin
 		}
@@ -44,9 +46,10 @@ lampa.{$BASE_DOMAIN} {
 
 	import otp_auth @only_index
 
-	handle /lampa-main/plugins/modification.js {
+	handle_path /lampa-main/plugins/* {
 		root * /lampa-plugins
-		rewrite * /modification.js
+		@not_static not file
+		reverse_proxy @not_static http://lampa
 		file_server
 	}
 

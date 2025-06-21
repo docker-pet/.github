@@ -1,0 +1,4 @@
+/data/*
+/generated/*
+!/data/README.md
+!/generated/README.md

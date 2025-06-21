@@ -1,0 +1,70 @@
+# Production environment
+# Run ./init.sh before starting the containers
+services:
+  backend:
+    image: ghcr.io/docker-pet/backend:latest
+    container_name: backend
+    restart: always
+    volumes:
+      - ./apps/backend/data:/app/pb_data
+      - ./apps/lampa/configs:/app/generated/lampa
+      - ./apps/prometheus/configs:/app/generated/prometheus
+      - ./apps/outline/generated:/app/generated/outline
+
+  frontend:
+    image: ghcr.io/docker-pet/frontend:latest
+    container_name: frontend
+    restart: always
+
+  lampa:
+    image: immisterio/lampac:latest
+    container_name: lampa
+    restart: always
+    depends_on:
+      - backend
+    volumes:
+      - ./apps/lampa/configs/init.conf:/home/init.conf:ro
+      - ./apps/lampa/configs/manifest.json:/home/module/manifest.json:ro
+      - ./apps/lampa/configs/passwd:/home/passwd:ro
+      - ./apps/lampa/media:/home/dlna
+      - ./apps/lampa/data:/home/cache/storage/
+    healthcheck:
+      test: curl -sS http://127.0.0.1 || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+  caddy:
+    image: ghcr.io/docker-pet/caddy:latest
+    container_name: caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+      CLOUDFLARE_DOMAIN_ZONE: ${CLOUDFLARE_DOMAIN_ZONE}
+      BASE_DOMAIN: ${BASE_DOMAIN}
+    volumes:
+      - ./apps/caddy.prod/Caddyfile:/etc/caddy/Caddyfile
+      - ./apps/caddy.prod/data/data:/data
+      - ./apps/caddy.prod/data/config:/config
+      - ./apps/lampa/plugins:/lampa-plugins:ro
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./apps/prometheus/configs:/prometheus_configs
+      - ./apps/prometheus/data:/prometheus_data
+    command:
+      - "--config.file=/prometheus_configs/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus_data"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 300
+    restart: always

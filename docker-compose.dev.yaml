@@ -1,4 +1,5 @@
-# Development environment for Frontend and Backend services
+# Development environment
+# Run ./init.sh before starting the containers
 services:
   caddy:
     image: ghcr.io/docker-pet/caddy:latest
@@ -9,19 +10,58 @@ services:
       - "443:443"
     environment:
       CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+      CLOUDFLARE_DOMAIN_ZONE: ${CLOUDFLARE_DOMAIN_ZONE}
       BASE_DOMAIN: ${BASE_DOMAIN}
-    command:
-      - run
-      - --config
-      - /etc/caddy/Caddyfile
-      - --watch
+    command: run --config /etc/caddy/Caddyfile --watch
     volumes:
-      - ./volumes/caddy/dev/Caddyfile:/etc/caddy/Caddyfile
-      - ./volumes/caddy/data:/data
-      - ./volumes/caddy/config:/config
-      - ./volumes/lampa/modification.js:/lampa-plugins/modification.js:ro
+      - ./apps/caddy.dev/Caddyfile:/etc/caddy/Caddyfile
+      - ./apps/caddy.dev/data/data:/data
+      - ./apps/caddy.dev/data/config:/config
+      - ./apps/lampa/plugins:/lampa-plugins:ro
+      - ./apps/outline/data/outline_dev/socks:/var/run/caddy/
 
   lampa:
-    image: nginx:alpine
+    platform: linux/amd64
+    image: immisterio/lampac:latest
     container_name: lampa
     restart: always
+    volumes:
+      - ./apps/lampa/configs/init.conf:/home/init.conf:ro
+      - ./apps/lampa/configs/manifest.json:/home/module/manifest.json:ro
+      - ./apps/lampa/configs/passwd:/home/passwd:ro
+      - ./apps/lampa/media:/home/dlna
+      - ./apps/lampa/data:/home/cache/storage/
+    healthcheck:
+      test: curl -sS http://127.0.0.1 || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+  outline:
+      image: ghcr.io/docker-pet/caddy:latest
+      container_name: outline
+      restart: always
+      depends_on:
+        - caddy
+      environment:
+            CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+            CLOUDFLARE_DOMAIN_ZONE: ${CLOUDFLARE_DOMAIN_ZONE}
+            CADDY_SERVICE_DOMAIN: outline.${BASE_DOMAIN}
+            CADDY_SERVICE_PATH: /jtWPhZocfhlIWQivW4rbrTatIi0ZtxzY
+            CADDY_SERVICE_PASSWORD: "$$2a$$10$$WW2BYiS3kTW4nbFBcz0GcOnU8zpLWU1yTR1fGgdYkrPrpYmGH2pbC" # Demo password "password". DONT USE IN PRODUCTION!
+      command: run --config /etc/caddy/Caddyfile --watch
+      volumes:
+          - ./Caddyfile:/etc/caddy/Caddyfile
+          - ./apps/outline/data/outline_dev/data:/data
+          - ./apps/outline/data/outline_dev/config:/config
+          - ./apps/outline/data/outline_dev/socks:/var/run/caddy/
+
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
+  #   volumes:
+  #     - ./apps/prometheus/configs:/prometheus_configs
+  #     - ./apps/prometheus/data:/prometheus_data
+  #   command:
+  #     - "--config.file=/prometheus_configs/prometheus.yml"
+  #     - "--storage.tsdb.path=/prometheus_data"

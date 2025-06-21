@@ -1,0 +1,4 @@
+/data/*
+/configs/*
+!/data/README.md
+!/configs/README.md

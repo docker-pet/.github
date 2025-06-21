@@ -1,13 +1,2 @@
-# Caddy
-/volumes/caddy/data
-/volumes/caddy/config
-
-# Enviroment
 .env
-
-# Lampa
-/volumes/lampa/configs
-/volumes/lampa/dlna
-
-# Backend
-/volumes/backend
+docker-compose.yaml

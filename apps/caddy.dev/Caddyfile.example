@@ -1,0 +1,66 @@
+{
+	debug
+
+	dynamic_dns {
+		provider cloudflare {$CLOUDFLARE_API_TOKEN}
+		dynamic_domains
+		domains {
+			{$CLOUDFLARE_DOMAIN_ZONE} {$BASE_DOMAIN}
+		}
+	}
+}
+
+(otp_auth) {
+	forward_auth {args[0]} http://host.docker.internal:8090 {
+		uri /api/otp/verify
+		copy_headers Cookie
+		header_down Set-Cookie
+		header_up Remote-Addr {host}
+		header_up Original-URI {uri}
+	}
+}	
+
+(cors) {
+	@subdomain header Origin https://*.{$BASE_DOMAIN}
+	header @subdomain Access-Control-Allow-Origin {http.request.header.Origin}
+	header @subdomain Access-Control-Allow-Credentials "true"
+	header @subdomain Vary "Origin"
+}
+
+http://outline.{$BASE_DOMAIN} {
+    reverse_proxy http://outline
+}
+
+{$BASE_DOMAIN} {
+	@api path /api /api/* /_ /_/*
+
+	handle @api {
+		reverse_proxy host.docker.internal:8090 {
+			header_down -Access-Control-Allow-Origin
+		}
+	}
+
+	handle {
+		reverse_proxy host.docker.internal:5173
+	}
+}
+
+lampa.{$BASE_DOMAIN} {
+	@only_index {
+		path /
+		path /lampa-main/index.html
+	}
+
+	import otp_auth @only_index
+
+	handle_path /lampa-main/plugins/* {
+		root * /lampa-plugins
+		@not_static not file
+		reverse_proxy @not_static http://lampa
+		file_server
+	}
+
+	handle {
+		reverse_proxy http://lampa
+	}
+}
