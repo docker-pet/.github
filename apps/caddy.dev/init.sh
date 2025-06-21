@@ -1,5 +1,5 @@
 #!/bin/sh
 
 if [ ! -f ./Caddyfile ]; then
-  cp ./Caddyfile.exmaple ./Caddyfile
+  cp ./Caddyfile.example ./Caddyfile
 fi
