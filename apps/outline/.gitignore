@@ -2,3 +2,4 @@
 /generated/*
 !/data/README.md
 !/generated/README.md
+/*.Caddyfile
