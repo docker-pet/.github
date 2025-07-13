@@ -45,20 +45,27 @@
         }
     }
 
-    // Initializer
+    // Reinitialize localStorage
     const userInitializerVersion = localStorage.getItem('lampa_modification_version')
     if (userInitializerVersion !== initializerVersion) {
-        await sleep(5000);
-
         needToReload = true;
         const lampaAccount = localStorage.getItem('account') || '';
         const lampaAccountEmail = localStorage.getItem('account_email') || '';
+        const language = localStorage.getItem('language') || 'ru';
 
         localStorage.clear();
         localStorage.setItem('account', lampaAccount);
         localStorage.setItem('account_email', lampaAccountEmail);
-        localStorage.setItem('proxy_tmdb', 'true');
         localStorage.setItem('lampa_modification_version', initializerVersion);
+        localStorage.setItem('lampa_modification_inited', 'false');
+        localStorage.setItem('language', language);
+    }
+
+    // Initialize
+    if (localStorage.getItem('lampa_modification_inited') === 'false') {
+        needToReload = true;
+        localStorage.setItem('lampa_modification_inited', 'true');
+        localStorage.setItem('proxy_tmdb', 'true');
     }
 
     // Reload if needed
