@@ -48,7 +48,7 @@
     // Initializer
     const userInitializerVersion = localStorage.getItem('lampa_modification_version')
     if (userInitializerVersion !== initializerVersion) {
-        await sleep(1000);
+        await sleep(5000);
 
         needToReload = true;
         const lampaAccount = localStorage.getItem('account') || '';
