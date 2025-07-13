@@ -1,5 +1,5 @@
 (async () => {
-    const initializerVersion = 'v0.0.1';
+    const initializerVersion = 'v0.0.2';
     let needToReload = false;
 
     // Auth
@@ -52,6 +52,7 @@
         localStorage.clear();
         localStorage.setItem('account', lampaAccount);
         localStorage.setItem('account_email', lampaAccountEmail);
+        localStorage.setItem('proxy_tmdb', 'true');
         localStorage.setItem('lampa_modification_version', initializerVersion);
     }
 
