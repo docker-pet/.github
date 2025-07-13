@@ -21,7 +21,7 @@
             ).then(response => response.json()).catch(() => null)
 
             const userDeviceName = decodeURIComponent(user.deviceName || '');
-            const userAuthKey = user.authKey || '';
+            const userAuthKey = user.userId || '';
 
             const deviceName = localStorage.getItem('device_name') || '';
             const lampacUnicId = localStorage.getItem('lampac_unic_id') || '';

@@ -18,17 +18,36 @@
 }
 
 (cors) {
-	@subdomain header Origin https://*.{$BASE_DOMAIN}
-	header @subdomain Access-Control-Allow-Origin {http.request.header.Origin}
-	header @subdomain Access-Control-Allow-Credentials "true"
-	header @subdomain Vary "Origin"
+	@cors_preflight{args.0} method OPTIONS
+	@cors{args.0} header Origin {args.0}
+
+	handle @cors_preflight{args.0} {
+		header {
+			Access-Control-Allow-Origin "{args.0}"
+			Access-Control-Allow-Credentials "true"
+			Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+			Access-Control-Allow-Headers *
+			Access-Control-Max-Age "3600"
+			defer
+		}
+		respond "" 204
+	}
+
+	handle @cors{args.0} {
+		header {
+			Access-Control-Allow-Origin "{args.0}"
+			Access-Control-Allow-Credentials "true"
+			Access-Control-Expose-Headers *
+			defer
+		}
+	}
 }
 
 {$BASE_DOMAIN} {
 	@api path /api /api/* /_ /_/*
 
 	handle @api {
-        import cors
+		import cors https://lampa.{$BASE_DOMAIN}
 		reverse_proxy http://backend {
 			header_down -Access-Control-Allow-Origin
 		}
