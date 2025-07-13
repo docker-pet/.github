@@ -62,7 +62,7 @@
     }
 
     // Initialize
-    if (localStorage.getItem('lampa_modification_inited') === 'false') {
+    else if (localStorage.getItem('lampa_modification_inited') === 'false') {
         needToReload = true;
         localStorage.setItem('lampa_modification_inited', 'true');
         localStorage.setItem('proxy_tmdb', 'true');
