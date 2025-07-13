@@ -1,5 +1,5 @@
 (async () => {
-    const initializerVersion = 'v0.0.3';
+    const initializerVersion = 'v0.0.4';
     let needToReload = false;
 
     // Sleep
