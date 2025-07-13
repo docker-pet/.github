@@ -16,7 +16,7 @@
             const parentDomain = url.hostname.replace(/^[^.]+\./, '');
 
             const user = await fetch(
-                `${url.protocol}//${parentDomain}/api/otp/me`,
+                `${url.protocol}//${parentDomain}/api/otp/me?with-lampa`,
                 { credentials: "include" }
             ).then(response => response.json()).catch(() => null)
 
