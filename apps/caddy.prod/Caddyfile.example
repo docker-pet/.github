@@ -28,6 +28,7 @@
 	@api path /api /api/* /_ /_/*
 
 	handle @api {
+        import cors
 		reverse_proxy http://backend {
 			header_down -Access-Control-Allow-Origin
 		}
