@@ -1,6 +1,9 @@
 (async () => {
-    const initializerVersion = 'v0.0.2';
+    const initializerVersion = 'v0.0.3';
     let needToReload = false;
+
+    // Sleep
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     // Auth
     const retryLimit = 10;
@@ -38,13 +41,15 @@
             break;
         } catch (e) {
             console.error('Error in modification script:', e);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await sleep(500);
         }
     }
 
     // Initializer
     const userInitializerVersion = localStorage.getItem('lampa_modification_version')
     if (userInitializerVersion !== initializerVersion) {
+        await sleep(1000);
+
         needToReload = true;
         const lampaAccount = localStorage.getItem('account') || '';
         const lampaAccountEmail = localStorage.getItem('account_email') || '';
